@@ -1,5 +1,4 @@
 import os
-import requests
 import aiohttp
 import asyncio
 import re
@@ -26,15 +25,17 @@ class SpotifyController:
 
     async def refresh_token(self):
         payload = self.__get_payload()
-        response = requests.post(self.__token_url, data=payload)
-
-        if response.status_code == 200:
-            logging.debug("Successfully refreshed spotify token.")
-            self.__access_token = response.json()['access_token']
-            return self.__access_token
-        else:
-            logging.debug(f"Failed to refresh token: {response.status_code} - {response.text}")
-            return None
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.__token_url, data=payload) as response:
+                if response.status == 200:
+                    logging.debug("Successfully refreshed spotify token.")
+                    data = await response.json()
+                    self.__access_token = data['access_token']
+                    return self.__access_token
+                else:
+                    text = await response.text()
+                    logging.debug(f"Failed to refresh token: {response.status} - {text}")
+                    return None
 
     async def get_access_token(self):
         if self.__access_token is None:
