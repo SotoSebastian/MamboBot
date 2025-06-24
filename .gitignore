@@ -192,3 +192,13 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Venus bot
+cookies.txt
+bot_log.log
+venv/
+__pycache__/
+management/banned_users_list.json
+management/bot_keywords.json
+management/vip_users_list.json
+management/word_counters.json
