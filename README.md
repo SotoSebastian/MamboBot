@@ -77,6 +77,8 @@ While "venus" is the default keyword to activate these commands, you can actuall
 - This command will show all of the available keywords you can use as a voice command, from here you can also add or remove certain keywords.
 ### Example Usage:
 
+![voiceplay](https://github.com/user-attachments/assets/1d329973-20cb-49b2-810d-21a483379741)
+
 - Since this bot can listen to the users in a voice channel, I also added the ability for it to keep track of certain words being said.
 ### /counters
 With this command, you will be able to see all of the keywords and word counters. You can also add or remove keywords/counters from this menu. 
@@ -84,10 +86,14 @@ With this command, you will be able to see all of the keywords and word counters
 - Keywords are words that will track towards a counter. You can have multiple keywords point to a counter.
 ### Example Usage:
 
+![unreal](https://github.com/user-attachments/assets/cfa44704-85d5-4cdf-aad8-31039724c2c7)
+
 ### /transcribe
 This command allows you to transcribe the audio from all users in a voice channel to a specified text channel. If no channel is specified, it will turn off transcribing.
 
-## Smart Connect
+![transcribe](https://github.com/user-attachments/assets/deb8b668-2875-4092-bd6e-7850f8905923)
+
+### Smart Connect
 - While the bot is in 24/7 mode, the bot will join the channel when you join, or it will leave when it is the last one left in the channel.
 ---
 
@@ -146,6 +152,8 @@ Resumes the current song from where it left off.
 
 ### /queue
 Shows the queue of songs, can move or remove songs from queue here.
+
+![queue](https://github.com/user-attachments/assets/34a33851-8bdc-486d-aca7-82a7883f1974)
 
 ### /shuffle
 Shuffles the queue.
