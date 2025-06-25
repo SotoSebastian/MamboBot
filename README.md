@@ -26,6 +26,7 @@ Venus Bot is a simple, yet powerful and customizable Discord music bot built wit
 > - ✅ You must have **[FFmpeg](https://ffmpeg.org/download.html)** installed and available in your system’s `PATH`
 > - ✅ You must use **Python 3.11** and create a virtual environment in the root directory
 > - ✅ You need to configure the `.env` file before running the bot
+> - ✅ You need to extract your cookies.txt and place it in the root folder.
 
 ---
 
