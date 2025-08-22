@@ -7,7 +7,7 @@ certifi==2025.4.26
 cffi==1.17.1
 charset-normalizer==3.4.2
 discord-ext-voice_recv @ git+https://github.com/imayhaveborkedit/discord-ext-voice-recv@ac04ea7b0941112e83767cf1c1469b408fa06748
-discord.py @ git+https://github.com/Rapptz/discord.py@4496df79d047b7c26f0413c8a34086d309b96904
+discord.py==2.6.0
 dotenv==0.9.9
 frozenlist==1.7.0
 idna==3.10
