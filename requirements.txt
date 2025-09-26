@@ -21,4 +21,4 @@ SpeechRecognition==3.10.4
 typing_extensions==4.14.0
 urllib3==2.4.0
 yarl==1.20.1
-yt-dlp==2025.8.22
+yt-dlp==2025.9.23
