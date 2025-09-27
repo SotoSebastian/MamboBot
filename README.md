@@ -21,6 +21,8 @@ Venus Bot is a simple, yet powerful and customizable Discord music bot built wit
 
 ## 🚀 Getting Started
 
+-Note: If all of the features of the bot are working besides actually playing music, just update your yt-dlp package.
+
 > **Before You Start:**
 >
 > - ✅ You must have **[FFmpeg](https://ffmpeg.org/download.html)** installed and available in your system’s `PATH`
