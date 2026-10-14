@@ -163,12 +163,14 @@ MamboBot puede reconocer comandos hablados por los usuarios presentes en un cana
 **Ejemplos de comandos hablados:**
 
 ```text
-venus play [nombre de la canción]
-venus pause
-venus skip
-venus next
-venus loop
-venus stop
+mambo play [nombre de la canción]
+mambo pause
+mambo skip
+mambo next
+mambo loop
+mambo stop
+mambo reset
+mambo recommend
 ```
 
 También se han añadido alias en español:
@@ -177,7 +179,8 @@ También se han añadido alias en español:
 - **Pausa:** `pausa`, `pausar`.
 - **Siguiente canción:** `siguiente`, `salta`, `saltar`.
 - **Repetición:** `repite`, `repetir`.
-- **Detener:** `para`, `detener`, `detén`.
+- **Detener / Reiniciar:** `para`, `detener`, `detén`.
+- **Recomendar:** `recomienda`, `recomendar`, `recomendaciones`.
 
 Los comandos hablados requieren que el bot esté conectado al canal de voz y que la transcripción reconozca la frase correctamente.
 
