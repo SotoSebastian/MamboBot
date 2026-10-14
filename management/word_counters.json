@@ -1,9 +1,10 @@
 [
   {
-    "unruh": "unreal",
-    "unreal": "unreal"
+    "Mambo": "Mambo",
+    "Minecraft": "Minecraft"
   },
   {
-    "unreal": 0
+    "Mambo": 0,
+    "Minecraft": 0
   }
 ]

@@ -193,7 +193,7 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-# Venus bot
+# Mambo bot
 cookies.txt
 bot_log.log
 README.md

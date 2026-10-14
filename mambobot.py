@@ -34,7 +34,7 @@ try:
     ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00000080)
 except Exception: pass
 
-class VenusBot(discord.Client):
+class MamboBot(discord.Client):
     def __init__(self):
         intents = discord.Intents.default()
         intents.message_content = True
@@ -72,7 +72,7 @@ class VenusBot(discord.Client):
     async def start_bot(self):
         await self.start(self.token)
 
-bot = VenusBot()
+bot = MamboBot()
 
 # event to disconnect or reconnect the bot from a voice channel based on number of members
 @bot.event

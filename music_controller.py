@@ -934,7 +934,7 @@ class MusicController:
                 return None
 
             if DEBUG_SAVE_AUDIO:
-                with open("debug_venus.wav", "wb") as f:
+                with open("debug_mambo.wav", "wb") as f:
                     f.write(audio.get_wav_data())
 
             try:
