@@ -15,9 +15,11 @@ from embed_views.search_view import SearchView
 from embed_views.keywords_view import KeywordsView
 from embed_views.counters_view import CountersView
 
+import ctypes
+
 # set up logging
 logging.basicConfig(
-    level=logging.INFO,  # Set logging level
+    level=logging.DEBUG,  # Set logging level
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(f"{Path(__file__).resolve().parent / 'bot_log.log'}", mode='w'),
@@ -27,6 +29,10 @@ logging.basicConfig(
 
 # block discords logging
 logging.getLogger("discord").setLevel(logging.WARNING)
+
+try:
+    ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00000080)
+except Exception: pass
 
 class VenusBot(discord.Client):
     def __init__(self):
@@ -266,36 +272,66 @@ async def removeAdmin(interaction: discord.Interaction, user: discord.User):
     logging.debug(f"/removeAdmin from {interaction.user.name} has ended")
     return
 
-@bot.tree.command(name='play', description='Play a Youtube, Spotify, or Soundcloud Song')
+@bot.tree.command(
+    name="play",
+    description="Play a Youtube, Spotify, or Soundcloud Song"
+)
 async def play(interaction: discord.Interaction, query: str):
-    logging.info(f"{interaction.user.name} has activated /play")
+    logging.info("%s has activated /play", interaction.user.name)
 
-    # check if user is banned
-    bannedUsersClass = BannedUsers()
-    bannedUsers = await bannedUsersClass.loadBannedUserIDs()
-    if interaction.user.id in bannedUsers:
-        await interaction.response.send_message(f"User **{interaction.user.display_name}** is banned from the bot.")
-        return
+    # Responder inmediatamente a Discord para evitar que expire la interacción.
+    await interaction.response.defer(thinking=True)
 
-    # grab the music controller for designated guild
-    musicController = await bot.getGuildMusicController(guild= interaction.guild)
-    # check if bot is connected to a voice channel
-    if not musicController.isConnectedToVC():
-        # check if user is in a voice channel
-        if not interaction.user.voice or not interaction.user.voice.channel:
-            await interaction.response.send_message("You or the Bot must be in a voice channel to use this command.")
+    try:
+        bannedUsersClass = BannedUsers()
+        bannedUsers = await bannedUsersClass.loadBannedUserIDs()
+
+        if interaction.user.id in bannedUsers:
+            await interaction.followup.send(
+                f"User **{interaction.user.display_name}** is banned from the bot.",
+                ephemeral=True
+            )
             return
-        else:
-            await musicController.two_four_seven(interaction.user.voice.channel, interaction.channel)
 
-    # send initial response
-    await interaction.response.send_message(f"Searching For Song...", delete_after= 5)
+        musicController = await bot.getGuildMusicController(
+            guild=interaction.guild
+        )
 
-    # send the query to determine where the song comes from
-    await musicController.determineSongSource(interaction.user, query)
-    
-    logging.debug(f"/play from {interaction.user.name} has ended")
-    return
+        if not musicController.isConnectedToVC():
+            if not interaction.user.voice or not interaction.user.voice.channel:
+                await interaction.followup.send(
+                    "You or the Bot must be in a voice channel to use this command.",
+                    ephemeral=True
+                )
+                return
+
+            await musicController.two_four_seven(
+                interaction.user.voice.channel,
+                interaction.channel
+            )
+
+        await interaction.followup.send(
+            f"Searching for song: **{query}**",
+            ephemeral=True
+        )
+
+        await musicController.determineSongSource(
+            interaction.user,
+            query
+        )
+
+        logging.debug("/play from %s has ended", interaction.user.name)
+
+    except Exception:
+        logging.exception("Error ejecutando /play")
+
+        try:
+            await interaction.followup.send(
+                "Ocurrió un error al buscar o reproducir la canción.",
+                ephemeral=True
+            )
+        except discord.NotFound:
+            logging.exception("La interacción de /play ya no está disponible.")
 
 @bot.tree.command(name='playfile', description='Plays an Audio File.')
 async def playfile(interaction: discord.Interaction, file: discord.Attachment):
@@ -742,7 +778,7 @@ async def help(interaction: discord.Interaction):
     embed.add_field(name="/Unban", value="Admin Only - Un bans a user from the bot.", inline=False)
     embed.add_field(name="/AddAdmin", value="Admin Only - Makes the user an admin.", inline=False)
     embed.add_field(name="/RemoveAdmin", value="Admin Only - Removes admin from user.", inline=False)
-    embed.add_field(name="Available Voice Commands:", value="'venus play', 'venus skip', 'venus next', 'venus loop', 'venus pause', 'venus stop'", inline=False)
+    embed.add_field(name="Available Voice Commands:", value="'mambo play', 'mambo skip', 'mambo next', 'mambo loop', 'mambo pause', 'mambo stop'", inline=False)
     embed.set_thumbnail(url=bot.user.avatar.url)
     await interaction.response.send_message(embed=embed)
     

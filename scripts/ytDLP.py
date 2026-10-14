@@ -36,21 +36,22 @@ class VideoSearcher():
                 'format': 'bestaudio/best',
                 'quiet': True,
                 'noplaylist': True,
-                'cookiefile': str(self.cookies_path),
                 'cachedir': False,
             }
             with YoutubeDL(yt_dlp_options) as ytdlp:
                 info = ytdlp.extract_info(video_url, download=False)
-                return {
-                    'title': re.sub(r'[^\w\s\-]', '', info.get('title', '')),
-                    'duration': int(info.get('duration') or 0),  # in seconds
-                    'thumbnail': info.get('thumbnail'),
-                    'link': info.get('url'),
-                }
+            return {
+                'title': info.get('title', ''),
+                'artist': info.get('artist') or info.get('uploader') or info.get('channel'),
+                'duration': int(info.get('duration') or 0),
+                'thumbnail': info.get('thumbnail'),
+                'url': info.get('webpage_url') or video_url,
+                'link': info.get('url'),
+            }
 
         return await loop.run_in_executor(None, extract_info)
     
-    async def getVideoInfoFromQuery(self, video_query):
+    async def getVideoInfoFromQuery(self, video_query, max_results=1):
         loop = asyncio.get_running_loop()
 
         def extract_info():
@@ -58,21 +59,41 @@ class VideoSearcher():
                 'format': 'bestaudio/best',
                 'quiet': True,
                 'noplaylist': True,
-                'cookiefile': str(self.cookies_path),
                 'cachedir': False,
-                'default_search': 'ytsearch',
-                'max_downloads': 1
+                'default_search': f'ytsearch{max_results}',
             }
+
             with YoutubeDL(yt_dlp_options) as ytdlp:
-                info = ytdlp.extract_info(f"{video_query} lyrics", download=False)
-                video = info['entries'][0] if 'entries' in info else info
-                return {
-                    'title': re.sub(r'[^\w\s\-]', '', video.get('title', '')),
+                info = ytdlp.extract_info(video_query, download=False)
+
+            entries = info.get('entries')
+
+            if entries is not None:
+                videos = [entry for entry in entries if entry is not None]
+            else:
+                videos = [info] if info else []
+
+            results = []
+
+            for video in videos:
+                results.append({
+                    'title': video.get('title', ''),
+                    'artist': (
+                        video.get('artist')
+                        or video.get('uploader')
+                        or video.get('channel')
+                    ),
                     'duration': int(video.get('duration') or 0),
                     'thumbnail': video.get('thumbnail'),
+                    'url': (
+                        video.get('webpage_url')
+                        or video.get('original_url')
+                        or video.get('url')
+                    ),
                     'link': video.get('url'),
-                    'url': video.get('webpage_url')
-                }
+                })
+
+            return results
 
         return await loop.run_in_executor(None, extract_info)
     
@@ -84,7 +105,6 @@ class VideoSearcher():
                 'format': 'bestaudio/best',
                 'quiet': True,
                 'noplaylist': True,
-                'cookiefile': str(self.cookies_path),
                 'cachedir': False,
                 'default_search': 'ytsearch10',
                 'ignoreerrors': True,
@@ -112,7 +132,6 @@ class VideoSearcher():
                 'format': 'bestaudio/best',
                 'quiet': False,
                 'extract_flat': 'in_playlist',
-                'cookiefile': str(self.cookies_path),
                 'cachedir': False
             }
             with YoutubeDL(yt_dlp_options) as ytdlp:
@@ -135,7 +154,6 @@ class VideoSearcher():
                 'format': 'bestaudio/best',
                 'quiet': False,
                 # 'extract_flat': 'in_playlist',
-                'cookiefile': str(self.cookies_path),
                 'cachedir': False,
                 'ignoreerrors': True
             }

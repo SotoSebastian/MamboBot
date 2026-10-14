@@ -12,7 +12,7 @@ class BotKeywords:
         self.bot_keywords_file = root_dir / "bot_keywords.json"
         # Ensure file exists
         if not self.bot_keywords_file.exists():
-            self.bot_keywords_file.write_text(json.dumps(["venus"]))  # start with empty list
+            self.bot_keywords_file.write_text(json.dumps(["mambo"]))  # start with empty list
 
     # Load keywords
     async def loadBotKeywords(self):
