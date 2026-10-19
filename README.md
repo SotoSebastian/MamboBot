@@ -229,3 +229,7 @@ Se reconoce el proyecto original y a sus autores. Las modificaciones añadidas a
 ## Licencia
 
 Consulta el archivo `LICENSE` del repositorio para conocer las condiciones de uso y distribución del código original y los avisos de copyright aplicables.
+
+
+## Problemas de compatibilidad
+Se creó un archivo dentro del repositorio COMPATIBILIDAD_LINUX con información sobre los errores y soluciones que pueden surgir con LINUX
