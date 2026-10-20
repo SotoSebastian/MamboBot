@@ -3,6 +3,8 @@ import re
 import asyncio
 import sys
 import time
+import os
+import requests 
 import random
 import logging
 import audioop
@@ -916,6 +918,7 @@ class MusicController:
     # ------------------------------------------------------------------
 
     # function to start the voice listening
+    
     async def startVoiceRecording(self):
         logging.debug("in voice recording")
 
@@ -928,8 +931,11 @@ class MusicController:
         if callable(is_listening) and is_listening():
             return
 
-        # override the speech recognition to use google
-        def process_wit(recognizer: sr.Recognizer, audio: sr.AudioData, user) -> Optional[str]:
+        def process_omniroute(
+            recognizer: sr.Recognizer,
+            audio: sr.AudioData,
+            user
+        ) -> Optional[str]:
             if len(audio.frame_data) < MIN_AUDIO_BYTES:
                 return None
 
@@ -938,24 +944,48 @@ class MusicController:
                     f.write(audio.get_wav_data())
 
             try:
-                text = recognizer.recognize_google(audio, language="es-CL")
+                api_key = os.getenv("OMNIROUTE_API_KEY")
+                if not api_key:
+                    logging.error("Falta OMNIROUTE_API_KEY en el entorno.")
+                    return None
+
+                wav_data = audio.get_wav_data()
+
+                response = requests.post(
+                    "http://localhost:20128/v1/audio/transcriptions",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    data={"model": "deepgram/nova-3","language": "multi",},
+                    files={
+                        "file": ("audio.wav", wav_data, "audio/wav")
+                    },
+                    timeout=45,
+                )
+                response.raise_for_status()
+
+                text = response.json().get("text", "").strip()
+                if not text:
+                    logging.debug("OmniRoute no devolvió texto.")
+                    return None
 
                 logging.info(f"Escuchado ({user}): {text}")
+
                 asyncio.run_coroutine_threadsafe(
                     self.handleTranscribedAudio(user, text),
                     self.client.loop
                 )
                 return text
-            except sr.UnknownValueError:
-                logging.debug("No se pudo entender el audio.")
+
+            except requests.RequestException:
+                logging.exception("Error al transcribir mediante OmniRoute.")
             except Exception:
-                logging.exception("Error al transcribir.")
+                logging.exception("Error inesperado durante la transcripción.")
+
             return None
 
         try:
             voice_client.listen(
                 vr_sr.SpeechRecognitionSink(
-                    process_cb=process_wit,
+                    process_cb=process_omniroute,
                     default_recognizer="google"
                 )
             )
